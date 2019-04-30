@@ -59,7 +59,20 @@ function price_format($numb) {
         $dec_point,
         $thousands_sep
     );
-    return $price_formated;
+    return $price_formated . '<b class="rub">₽</b>';
+}
+
+function timer($lot_time) {
+    $current_date = date_create("now");
+    $finish_date = date_create("$lot_time");
+    $diff = date_diff($current_date, $finish_date);
+    $time_left = date_interval_format($diff, "%H:%i");
+    $time_left_sec = (strtotime("$lot_time") - strtotime("now"));
+    if($time_left_sec < 3600) {
+        return '<div class="lot__timer timer timer--finishing">' . $time_left . '</div>';
+    } else {
+        return '<div class="lot__timer timer">' . $time_left . '</div>';
+    }
 }
 
 $page_content = include_template('index.php', [
