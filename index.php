@@ -59,7 +59,7 @@ function price_format($numb) {
         $dec_point,
         $thousands_sep
     );
-    return $price_formated . '<b class="rub">₽</b>';
+    return $price_formated;
 }
 
 $page_content = include_template('index.php', [
