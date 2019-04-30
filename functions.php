@@ -1,5 +1,10 @@
 <?php
 
+function esc($str) {
+    $text = htmlspecialchars($str);
+    return $text;
+}
+
 function include_template($name, $data) {
     $name = 'templates/' . $name;
     $result = '';
