@@ -1,6 +1,6 @@
--- CREATE DATABASE yeticave
---     DEFAULT CHARACTER SET utf8
---     DEFAULT COLLATE utf8_general_ci;
+CREATE DATABASE yeticave
+    DEFAULT CHARACTER SET utf8
+    DEFAULT COLLATE utf8_general_ci;
 
 USE yeticave;
 
@@ -40,7 +40,7 @@ CREATE TABLE users (
     id              INT AUTO_INCREMENT PRIMARY KEY,
     dt_add          TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     name            CHAR(128) NOT NULL,
-    email           CHAR(128) NOT NULL UNIQUE,
+    email           CHAR(128) NOT NULL,
     password        CHAR(64) NOT NULL,
     avatar          CHAR(128),
     contact         TEXT
