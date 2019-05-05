@@ -68,7 +68,8 @@ function timer($lot_time) {
     $diff = date_diff($current_date, $finish_date);
     $time_left = date_interval_format($diff, "%H:%i");
     $time_left_sec = (strtotime("$lot_time") - strtotime("now"));
-    if($time_left_sec < 3600) {
+    $lot_expiry_sec = 3600;
+    if ($time_left_sec <= $lot_expiry_sec) {
         return '<div class="lot__timer timer timer--finishing">' . $time_left . '</div>';
     } else {
         return '<div class="lot__timer timer">' . $time_left . '</div>';
