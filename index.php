@@ -8,7 +8,11 @@ mysqli_set_charset($connect, "utf8");
 
 //проверка подключения
 if($connect == false) {
-    print('Ошибка подключения: ' . mysqli_connect_error());
+    $error = mysqli_connect_error();
+//    print('Ошибка подключения: ' . mysqli_connect_error());
+    $content = include_template('error.php', [
+        'error' => $error
+    ]);
 } else {
     //создаем запрос для получения списка новых лотов
     $sql_lots = 'SELECT l.id, title, img_path, sum_start, bet_step, c.name FROM lots l ' .
@@ -23,65 +27,46 @@ if($connect == false) {
     } else {
         //получаем текст последней ошибки
         $error = mysqli_error($connect);
-        print('Ошибка MySQL: ' . $error);
+//        print('Ошибка MySQL: ' . $error);
+        $content = include_template('error.php', [
+            'error' => $error
+        ]);
     }
     //запрос для получения списка категорий;
     $sql = 'SELECT * FROM categories';
     $res_cat = mysqli_query($connect, $sql);
-    if($res_cat) {
+    if ($res_cat) {
         $categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
     } else {
         $error = mysqli_error($connect);
-        print('Ошибка MySQL: ' . $error);
+//        print('Ошибка MySQL: ' . $error);
+        $content = include_template('error.php', [
+            'error' => $error
+        ]);
+    }
+
+    //Добавьте карточкам обьявлений ссылки на сценарий lot.php вместе с параметром запроса
+
+    $show_field = 'id';
+    $sql = 'SELECT l.$show_field, title, description, img_path, sum_start, bet_step, c.NAME, dt_remove FROM lots l' .
+                'JOIN categories c ON l.category_id = c.id WHERE l.id = 8';
+
+    if($res = mysqli_query($connect, $sql)) {
+        $lot = mysqli_fetch_all($res, MYSQLI_ASSOC);
+        $content = include_template('lot.php', [
+            'lot' => $lot
+        ]);
+    } else {
+        $error = mysqli_error($connect);
+        $content = include_template('error.php', [
+            'error' => $error
+        ]);
     }
 }
 
 $is_auth = rand(0, 1);
 
 $user_name = 'Татьяна';
-//
-//$categories = [
-//    'Доски и лыжи', 'Крепления', 'Ботинки', 'Одежда', 'Инструменты', 'Разное'
-//];
-
-//$lots = [
-//    [
-//        'name' => '2014 Rossignol District Snowboard',
-//        'category' => 'Доски и лыжи',
-//        'price' => 10999,
-//        'img' => 'img/lot-1.jpg'
-//    ],
-//    [
-//        'name' => 'DC Ply Mens 2016/2017 Snowboard',
-//        'category' => 'Доски и лыжи',
-//        'price' => 159999,
-//        'img' => 'img/lot-2.jpg'
-//    ],
-//    [
-//        'name' => 'Крепления Union Contact Pro 2015 года размер L/XL',
-//        'category' => 'Крепления',
-//        'price' => 8000,
-//        'img' => 'img/lot-3.jpg'
-//    ],
-//    [
-//        'name' => 'Ботинки для сноуборда DC Mutiny Charocal',
-//        'category' => 'Ботинки',
-//        'price' => 10999,
-//        'img' => 'img/lot-4.jpg'
-//    ],
-//    [
-//        'name' => 'Куртка для сноуборда DC Mutiny Charocal',
-//        'category' => 'Одежда',
-//        'price' => 7500,
-//        'img' => 'img/lot-5.jpg'
-//    ],
-//    [
-//        'name' => 'Маска Oakley Canopy',
-//        'category' => 'Разное',
-//        'price' => 5400,
-//        'img' => 'img/lot-6.jpg'
-//    ]
-//];
 
 function price_format($numb) {
     $decimals = 0;
@@ -113,6 +98,11 @@ function timer($lot_time) {
 $page_content = include_template('index.php', [
     'categories' => $categories,
     'lots' => $lots
+]);
+
+$lot_content = include_template('lot.php', [
+    'lot' => $lot,
+    'categories' => $categories,
 ]);
 
 $layout_content = include_template('layout.php', [
