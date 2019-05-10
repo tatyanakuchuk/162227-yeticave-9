@@ -14,8 +14,8 @@ if($connect == false) {
 
     if (isset($_GET['id'])) {
         $lot = $_GET;
-        $lot['id'] = $_GET['id'];
-        $lot['description'] = $_GET['description'];
+        $lot_id = $_GET['id'];
+        $lot_desc = $_GET['description'];
 
         $script_name = pathinfo(__FILE__, PATHINFO_BASENAME);
         $query = http_build_query($lot);
@@ -26,7 +26,7 @@ if($connect == false) {
     //создаем запрос для получения данных лота
     $sql_lot = 'SELECT l.id, title, description, img_path, sum_start, bet_step, c.name, dt_remove FROM lots l ' .
                 'JOIN categories c ON l.category_id = c.id ' .
-                'WHERE l.id = ' . $lot['id'];
+                'WHERE l.id = ' . $lot_id;
     //отправляем запрос и получаем результат
     $res_lot = mysqli_query($connect, $sql_lot);
     //запрос выполнен успешно
