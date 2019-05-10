@@ -69,6 +69,11 @@ function timer($lot_time) {
     }
 }
 
+$error = include_template('error.php', [
+    'categories' => $categories,
+    'nav' => $nav
+]);
+
 $nav = include_template('nav.php', [
     'categories' => $categories
 ]);

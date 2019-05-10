@@ -12,16 +12,10 @@ if($connect == false) {
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
 
+
+
     if (isset($_GET['id'])) {
-        $lot = $_GET;
         $lot_id = $_GET['id'];
-        $lot_desc = $_GET['description'];
-
-        $script_name = pathinfo(__FILE__, PATHINFO_BASENAME);
-        $query = http_build_query($lot);
-        $url = '/' . $script_name . '?' . $query;
-
-//        print_r($url);
     }
     //создаем запрос для получения данных лота
     $sql_lot = 'SELECT l.id, title, description, img_path, sum_start, bet_step, c.name, dt_remove FROM lots l ' .
@@ -33,13 +27,13 @@ if($connect == false) {
     if($res_lot) {
         //получаем данные лота в виде двумерного массива
         $lot = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
-//        print_r($lot);
+        print_r($lot);
     } else {
         //получаем текст последней ошибки
         $error = mysqli_error($connect);
         print('Ошибка MySQL: ' . $error);
+//        $content
     }
-
     //запрос для получения списка категорий;
     $sql = 'SELECT * FROM categories';
     $res_cat = mysqli_query($connect, $sql);
@@ -84,6 +78,11 @@ function timer($lot_time) {
 
 $nav = include_template('nav.php', [
     'categories' => $categories
+]);
+
+$error = include_template('error.php', [
+    'categories' => $categories,
+    'nav' => $nav
 ]);
 
 $content = include_template('lot.php', [
