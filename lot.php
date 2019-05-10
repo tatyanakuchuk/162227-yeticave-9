@@ -11,16 +11,29 @@ if($connect == false) {
     $error = mysqli_connect_error();
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
-    //создаем запрос для получения списка новых лотов
-    $sql_lots = 'SELECT l.id, title, img_path, sum_start, bet_step, c.name FROM lots l ' .
-                'JOIN categories c ON l.category_id = c.id  ' .
-                'WHERE dt_remove > NOW() ORDER BY dt_add DESC LIMIT 6';
+
+    if (isset($_GET['id'])) {
+        $lot = $_GET;
+        $lot['id'] = $_GET['id'];
+        $lot['description'] = $_GET['description'];
+
+        $script_name = pathinfo(__FILE__, PATHINFO_BASENAME);
+        $query = http_build_query($lot);
+        $url = '/' . $script_name . '?' . $query;
+
+//        print_r($url);
+    }
+    //создаем запрос для получения данных лота
+    $sql_lot = 'SELECT l.id, title, description, img_path, sum_start, bet_step, c.name, dt_remove FROM lots l ' .
+                'JOIN categories c ON l.category_id = c.id ' .
+                'WHERE l.id = ' . $lot['id'];
     //отправляем запрос и получаем результат
-    $res_lots = mysqli_query($connect, $sql_lots);
+    $res_lot = mysqli_query($connect, $sql_lot);
     //запрос выполнен успешно
-    if($res_lots) {
-        //получаем лоты в виде двумерного массива
-        $lots = mysqli_fetch_all($res_lots, MYSQLI_ASSOC);
+    if($res_lot) {
+        //получаем данные лота в виде двумерного массива
+        $lot = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
+//        print_r($lot);
     } else {
         //получаем текст последней ошибки
         $error = mysqli_error($connect);
@@ -73,9 +86,10 @@ $nav = include_template('nav.php', [
     'categories' => $categories
 ]);
 
-$content = include_template('index.php', [
+$content = include_template('lot.php', [
     'categories' => $categories,
-    'lots' => $lots
+    'nav' => $nav,
+    'lot' => $lot
 ]);
 
 $layout_content = include_template('layout.php', [
@@ -85,10 +99,9 @@ $layout_content = include_template('layout.php', [
     'content' => $content,
     'categories' => $categories,
     'title' => 'Главная',
-    'isMainPage' => true
+    'isMainPage' => false
 ]);
 
 print($layout_content);
-
 
 
