@@ -13,9 +13,10 @@
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
-                <div class="lot-item__timer timer">
-                    10:54
-                </div>
+                <?= timer($lot['dt_remove']); ?>
+<!--                <div class="lot-item__timer timer">-->
+<!--                    10:54-->
+<!--                </div>-->
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
                         <span class="lot-item__amount"><?= $lot['sum_start']; ?></span>

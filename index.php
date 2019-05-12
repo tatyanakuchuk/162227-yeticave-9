@@ -12,7 +12,7 @@ if($connect == false) {
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
     //создаем запрос для получения списка новых лотов
-    $sql_lots = 'SELECT l.id, title, img_path, sum_start, bet_step, c.name FROM lots l ' .
+    $sql_lots = 'SELECT l.id, title, img_path, sum_start, bet_step, c.name, dt_remove FROM lots l ' .
                 'JOIN categories c ON l.category_id = c.id  ' .
                 'WHERE dt_remove > NOW() ORDER BY dt_add DESC LIMIT 6';
     //отправляем запрос и получаем результат
@@ -68,11 +68,6 @@ function timer($lot_time) {
         return '<div class="lot__timer timer">' . $time_left . '</div>';
     }
 }
-
-$error = include_template('error.php', [
-    'categories' => $categories,
-    'nav' => $nav
-]);
 
 $nav = include_template('nav.php', [
     'categories' => $categories

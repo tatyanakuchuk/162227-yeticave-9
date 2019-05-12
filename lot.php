@@ -11,9 +11,6 @@ if($connect == false) {
     $error = mysqli_connect_error();
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
-
-
-
     if (isset($_GET['id'])) {
         $lot_id = $_GET['id'];
     }
@@ -27,13 +24,15 @@ if($connect == false) {
     if($res_lot) {
         //получаем данные лота в виде двумерного массива
         $lot = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
-        print_r($lot);
+        if(empty($lot)) {
+            header('Location: /error.php');
+        }
     } else {
         //получаем текст последней ошибки
         $error = mysqli_error($connect);
-        print('Ошибка MySQL: ' . $error);
-//        $content
+        print($error);
     }
+
     //запрос для получения списка категорий;
     $sql = 'SELECT * FROM categories';
     $res_cat = mysqli_query($connect, $sql);
@@ -41,7 +40,7 @@ if($connect == false) {
         $categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
     } else {
         $error = mysqli_error($connect);
-        print('Ошибка MySQL: ' . $error);
+        print($error);
     }
 }
 
@@ -80,15 +79,10 @@ $nav = include_template('nav.php', [
     'categories' => $categories
 ]);
 
-$error = include_template('error.php', [
-    'categories' => $categories,
-    'nav' => $nav
-]);
-
 $content = include_template('lot.php', [
     'categories' => $categories,
     'nav' => $nav,
-    'lot' => $lot
+    'lot' => $lot[0]
 ]);
 
 $layout_content = include_template('layout.php', [
