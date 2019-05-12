@@ -20,10 +20,10 @@
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
                         <span class="lot-item__amount">Текущая цена</span>
-                        <span class="lot-item__cost"><?php print ($cur_price = isset($max_bet) ? $max_bet['sum'] :  $lot['sum_start']); ?></span>
+                        <span class="lot-item__cost"><?php print($cur_price = isset($max_bet) ? $max_bet['sum'] :  $lot['sum_start']); ?></span>
                     </div>
                     <div class="lot-item__min-cost">
-                        Мин. ставка <span><?php print ($min_bet = $cur_price + $lot['bet_step']); ?></span>
+                        Мин. ставка <span><?php print($min_bet = $cur_price + $lot['bet_step']); ?></span>
                     </div>
                 </div>
                 <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">

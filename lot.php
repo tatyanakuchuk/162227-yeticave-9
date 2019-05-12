@@ -84,10 +84,11 @@ function timer($lot_time) {
     $time_left = date_interval_format($diff, "%H:%i");
     $time_left_sec = (strtotime("$lot_time") - strtotime("now"));
     $lot_expiry_sec = 3600;
+    $timer_class = isset($isMainPage) ? 'lot__timer' : 'lot-item__timer';
     if ($time_left_sec <= $lot_expiry_sec) {
-        return '<div class="lot__timer timer timer--finishing">' . $time_left . '</div>';
+        return '<div class="' . $timer_class . ' timer timer--finishing">' . $time_left . '</div>';
     } else {
-        return '<div class="lot__timer timer">' . $time_left . '</div>';
+        return '<div class="' . $timer_class . ' timer">' . $time_left . '</div>';
     }
 }
 
