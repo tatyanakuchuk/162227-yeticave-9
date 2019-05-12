@@ -25,12 +25,22 @@ if($connect == false) {
         //получаем данные лота в виде двумерного массива
         $lot = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
         if(empty($lot)) {
-            header('Location: /error.php');
+//            header('Location: /error.php');
+            http_response_code(404);
+
         }
     } else {
         //получаем текст последней ошибки
         $error = mysqli_error($connect);
         print($error);
+    }
+
+    //создаем запрос на получение max ставки
+    $sql_max_bet = 'SELECT b.id, b.lot_id, b.dt_add, b.user_id, sum, l.bet_step  FROM bets b ' .
+                    'JOIN lots l ON l.id = b.lot_id WHERE l.id = ' . $lot_id . ' ORDER BY b.dt_add DESC LIMIT 1';
+    $res_lot = mysqli_query($connect, $sql_max_bet);
+    if($res_lot) {
+        $max_bet = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
     }
 
     //запрос для получения списка категорий;
@@ -43,6 +53,8 @@ if($connect == false) {
         print($error);
     }
 }
+
+
 
 $is_auth = rand(0, 1);
 
@@ -82,7 +94,8 @@ $nav = include_template('nav.php', [
 $content = include_template('lot.php', [
     'categories' => $categories,
     'nav' => $nav,
-    'lot' => $lot[0]
+    'lot' => $lot[0],
+    'max_bet' => $max_bet[0]
 ]);
 
 $layout_content = include_template('layout.php', [

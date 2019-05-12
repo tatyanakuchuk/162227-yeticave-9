@@ -6,11 +6,12 @@ $connect = mysqli_connect("localhost", "root", "", "yeticave");
 mysqli_set_charset($connect, "utf8");
 
 if($connect == false) {
+
     $error = mysqli_connect_error();
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
-    http_response_code(404);
-    
+//    $error_code = http_response_code(404);
+    print_r($error_code);
     //запрос для получения списка категорий;
     $sql = 'SELECT * FROM categories';
     $res_cat = mysqli_query($connect, $sql);

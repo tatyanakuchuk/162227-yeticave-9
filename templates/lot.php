@@ -19,11 +19,11 @@
 <!--                </div>-->
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
-                        <span class="lot-item__amount"><?= $lot['sum_start']; ?></span>
-                        <span class="lot-item__cost"><?= $lot['bet_step']; ?></span>
+                        <span class="lot-item__amount">Текущая цена</span>
+                        <span class="lot-item__cost"><?= ($max_bet) ? $max_bet['sum'] :  $lot['sum_start']; ?></span>
                     </div>
                     <div class="lot-item__min-cost">
-                        Мин. ставка <span>12 000 р</span>
+                        Мин. ставка <span><?= $max_bet['sum']; ?></span>
                     </div>
                 </div>
                 <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post" autocomplete="off">
