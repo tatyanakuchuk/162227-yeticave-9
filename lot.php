@@ -1,5 +1,5 @@
 <?php
-
+$is404error = false;
 require_once('functions.php');
 
 //подключение к MySQL
@@ -25,9 +25,9 @@ if($connect == false) {
         //получаем данные лота в виде двумерного массива
         $lot = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
         if(empty($lot)) {
-//            header('Location: /error.php');
+            header('Location: /error.php');
             http_response_code(404);
-
+            $is404error = true;
         }
     } else {
         //получаем текст последней ошибки
@@ -35,19 +35,7 @@ if($connect == false) {
         print($error);
     }
 
-    //создаем запрос на получение max ставки
-    $sql_max_bet = 'SELECT b.id, b.lot_id, b.dt_add, b.user_id, sum, l.bet_step  FROM bets b ' .
-                    'JOIN lots l ON l.id = b.lot_id WHERE l.id = ' . $lot_id . ' ORDER BY b.dt_add DESC LIMIT 1';
-    $res_lot = mysqli_query($connect, $sql_max_bet);
-    if($res_lot) {
-        $max_bet = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
-        print_r($max_bet);
-    } else {
-        $error = mysqli_error($connect);
-        print($error);
-    }
-
-    //запрос для получения списка категорий;
+//    //запрос для получения списка категорий;
     $sql = 'SELECT * FROM categories';
     $res_cat = mysqli_query($connect, $sql);
     if ($res_cat) {
@@ -57,8 +45,6 @@ if($connect == false) {
         print($error);
     }
 }
-
-
 
 $is_auth = rand(0, 1);
 
@@ -77,14 +63,14 @@ function price_format($numb) {
     return $price_formated . '<b class="rub">₽</b>';
 }
 
-function timer($lot_time) {
+function timer($lot_time, $isMainPage = false) {
     $current_date = date_create("now");
     $finish_date = date_create("$lot_time");
     $diff = date_diff($current_date, $finish_date);
     $time_left = date_interval_format($diff, "%H:%i");
     $time_left_sec = (strtotime("$lot_time") - strtotime("now"));
     $lot_expiry_sec = 3600;
-    $timer_class = isset($isMainPage) ? 'lot__timer' : 'lot-item__timer';
+    $timer_class = ($isMainPage) ? 'lot__timer' : 'lot-item__timer';
     if ($time_left_sec <= $lot_expiry_sec) {
         return '<div class="' . $timer_class . ' timer timer--finishing">' . $time_left . '</div>';
     } else {
@@ -96,12 +82,19 @@ $nav = include_template('nav.php', [
     'categories' => $categories
 ]);
 
-$content = include_template('lot.php', [
-    'categories' => $categories,
-    'nav' => $nav,
-    'lot' => $lot[0],
-    'max_bet' => $max_bet[0]
-]);
+if ($is404error) {
+    $content = $content = include_template('error.php', [
+        'categories' => $categories,
+        'nav' => $nav
+    ]);
+} else {
+    $content = include_template('lot.php', [
+        'categories' => $categories,
+        'nav' => $nav,
+        'lot' => $lot[0]
+    ]);
+}
+
 
 $layout_content = include_template('layout.php', [
     'nav' => $nav,

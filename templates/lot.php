@@ -13,14 +13,14 @@
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
-                <?= timer($lot['dt_remove']); ?>
+                <?= timer($lot['dt_remove'], false); ?>
 <!--                <div class="lot-item__timer timer">-->
 <!--                    10:54-->
 <!--                </div>-->
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
                         <span class="lot-item__amount">Текущая цена</span>
-                        <span class="lot-item__cost"><?php print($cur_price = isset($max_bet) ? $max_bet['sum'] :  $lot['sum_start']); ?></span>
+                        <span class="lot-item__cost"><?php print($cur_price = $lot['sum_start']); ?></span>
                     </div>
                     <div class="lot-item__min-cost">
                         Мин. ставка <span><?php print($min_bet = $cur_price + $lot['bet_step']); ?></span>

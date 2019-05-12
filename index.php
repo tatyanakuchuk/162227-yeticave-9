@@ -55,17 +55,18 @@ function price_format($numb) {
     return $price_formated . '<b class="rub">₽</b>';
 }
 
-function timer($lot_time) {
+function timer($lot_time, $isMainPage = false) {
     $current_date = date_create("now");
     $finish_date = date_create("$lot_time");
     $diff = date_diff($current_date, $finish_date);
     $time_left = date_interval_format($diff, "%H:%i");
     $time_left_sec = (strtotime("$lot_time") - strtotime("now"));
     $lot_expiry_sec = 3600;
+    $timer_class = ($isMainPage) ? 'lot__timer' : 'lot-item__timer';
     if ($time_left_sec <= $lot_expiry_sec) {
-        return '<div class="lot__timer timer timer--finishing">' . $time_left . '</div>';
+        return '<div class="' . $timer_class . ' timer timer--finishing">' . $time_left . '</div>';
     } else {
-        return '<div class="lot__timer timer">' . $time_left . '</div>';
+        return '<div class="' . $timer_class . ' timer">' . $time_left . '</div>';
     }
 }
 

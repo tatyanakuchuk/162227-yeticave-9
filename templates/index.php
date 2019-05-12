@@ -28,7 +28,7 @@
                         <span class="lot__amount">Стартовая цена</span>
                         <span class="lot__cost"><?= price_format(esc($lot['sum_start'])); ?></span>
                     </div>
-                    <?= timer($lot['dt_remove']); ?>
+                    <?= timer($lot['dt_remove'], true); ?>
                 </div>
             </div>
         </li>
