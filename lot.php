@@ -41,6 +41,10 @@ if($connect == false) {
     $res_lot = mysqli_query($connect, $sql_max_bet);
     if($res_lot) {
         $max_bet = mysqli_fetch_all($res_lot, MYSQLI_ASSOC);
+        print_r($max_bet);
+    } else {
+        $error = mysqli_error($connect);
+        print($error);
     }
 
     //запрос для получения списка категорий;
