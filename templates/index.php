@@ -8,29 +8,30 @@
             </li>
         <?php endforeach; ?>
     </ul>
+
 </section>
 <section class="lots">
     <div class="lots__header">
         <h2>Открытые лоты</h2>
     </div>
     <ul class="lots__list">
-        <?php foreach ($lots as $lot): ?>
-            <li class="lots__item lot">
-                <div class="lot__image">
-                    <img src="<?= $lot['img_path']; ?>" width="350" height="260" alt="">
-                </div>
-                <div class="lot__info">
-                    <span class="lot__category"><?= esc($lot['name']); ?></span>
-                    <h3 class="lot__title"><a class="text-link" href="../pages/lot.html"><?= esc($lot['title']); ?></a></h3>
-                    <div class="lot__state">
-                        <div class="lot__rate">
-                            <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?= price_format(esc($lot['sum_start'])); ?></span>
-                        </div>
-                        <?= timer("tomorrow"); ?>
+    <?php foreach ($lots as $lot): ?>
+        <li class="lots__item lot">
+            <div class="lot__image">
+                <img src="<?= $lot['img_path']; ?>" width="350" height="260" alt="">
+            </div>
+            <div class="lot__info">
+                <span class="lot__category"><?= esc($lot['name']); ?></span>
+                <h3 class="lot__title"><a class="text-link" href="/lot.php?id=<?= $lot['id']; ?>"><?= esc($lot['title']); ?></a></h3>
+                <div class="lot__state">
+                    <div class="lot__rate">
+                        <span class="lot__amount">Стартовая цена</span>
+                        <span class="lot__cost"><?= price_format(esc($lot['sum_start'])); ?></span>
                     </div>
+                    <?= timer($lot['dt_remove'], true); ?>
                 </div>
-            </li>
-        <?php endforeach; ?>
+            </div>
+        </li>
+    <?php endforeach; ?>
     </ul>
 </section>
