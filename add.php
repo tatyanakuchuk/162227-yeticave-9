@@ -3,23 +3,29 @@
 require_once('functions.php');
 require_once ('data.php');
 
-//подключение к MySQL
-$connect = mysqli_connect("localhost", "root", "", "yeticave");
-mysqli_set_charset($connect, "utf8");
+
 
 //проверка подключения
 if($connect == false) {
     $error = mysqli_connect_error();
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
+    //запрос для получения списка категорий;
+    $sql = 'SELECT id, name FROM categories';
+    $res_cat = mysqli_query($connect, $sql);
+    if ($res_cat) {
+        $categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
+        $nav = include_template('nav.php', [
+            'categories' => $categories
+        ]);
+    } else {
+        $error = mysqli_error($connect);
+        print('Ошибка MySQL: ' . $error);
+    }
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $lot = $_POST;
-//        print_r($lot);
-
         $required = ['lot-name', 'message', 'category', 'file', 'lot-rate', 'lot-step', 'lot-date'];
-        $dict = ['lot-name' => 'Наименование', 'message' => 'Описание', 'category' => 'Категория',
-                'file' => 'Изображение', 'lot-rate' => 'Начальная цена', 'lot-step' => 'Шаг ставки',
-                'lot-date' => 'Дата окончания торгов'];
 
         $errors = [];
         foreach ($required as $key) {
@@ -42,20 +48,17 @@ if($connect == false) {
                 if ($key == 'lot-date') {
                     $errors[$key] = 'Введите дату завершения торгов';
                 }
-                if (count($errors)) {
-                    $errors[$key] = 'Пожалуйста, исправьте ошибки в форме.';
-                }
             }
         }
 
-        if (isset($_FILES['lot_img']['name'])) {
-            $tmp_name = $_FILES['lot_img']['tmp_name'];
-            $path = $_FILES['lot_img']['name'];
-
+        if (isset($_FILES['file']['name'])) {
+            $tmp_name = $_FILES['file']['tmp_name'];
+            $path = $_FILES['file']['name'];
+//            print_r($_FILES);
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
             $file_type = finfo_file($finfo, $tmp_name);
             if ($file_type !== 'image/png' || $file_type !== 'image/jpeg') {
-                $errors['file'] = 'Загрузите картинку в форматах jpg, jpeg или png';
+                $errors['file'] = 'Загрузите файл в формате jpg, jpeg или png';
             } else {
                 move_uploaded_file($tmp_name, 'uploads/' . $path);
                 $lot['path'] = $path;
@@ -64,34 +67,23 @@ if($connect == false) {
             $errors['file'] = 'Вы не загрузили файл';
         }
         if (count($errors)) {
-            $content = include_template('add.php', ['lot' => $lot, 'errors' => $errors, 'dict' => $dict]);
+            $content = include_template('add.php', ['lot' => $lot, 'nav' => $nav, 'categories' => $categories, 'errors' => $errors]);
         } else {
-            $content = include_template('view.php', ['lot' => $lot]);
+            $sql = 'INSERT INTO lots (dt_add, dt_remove, category_id, user_id, title, description, img_path, sum_start, bet_step, user_id_winner)' .
+                ' VALUES (NOW(), ?, ?, 3, ?, ?, ?, ?, ?, ?)';
+            $stmt = db_get_prepare_stmt($connect, $sql, [$lot['dt_remove'], $lot['category_id'], $lot['user_id'],
+                                        $lot['title'], $lot['description'], $lot['img_path'], $lot['sum_start'],
+                                        $lot['bet_step'], $lot['user_id_winner']]);
+            $res = mysqli_stmt_execute($stmt);
+            if ($res) {
+                $lot_id = mysqli_insert_id($connect);
+                header('Location: /lot.php?id=' . $lot_id);
+            }
         }
     } else {
-        $content = include_template('add.php', []);
-    }
-
-
-    //запрос для получения списка категорий;
-    $sql = 'SELECT * FROM categories';
-    $res_cat = mysqli_query($connect, $sql);
-    if ($res_cat) {
-        $categories = mysqli_fetch_all($res_cat, MYSQLI_ASSOC);
-    } else {
-        $error = mysqli_error($connect);
-        print('Ошибка MySQL: ' . $error);
+        $content = include_template('add.php', ['categories' => $categories, 'nav' => $nav]);
     }
 }
-
-$nav = include_template('nav.php', [
-    'categories' => $categories
-]);
-
-$content = include_template('add.php', [
-    'nav' => $nav,
-    'categories' => $categories
-]);
 
 $layout_content = include_template('layout.php', [
     'nav' => $nav,
