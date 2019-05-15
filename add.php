@@ -52,20 +52,22 @@ if($connect == false) {
         }
 
         if (isset($_FILES['file']['name'])) {
-            $tmp_name = $_FILES['file']['tmp_name'];
-            $path = $_FILES['file']['name'];
-//            print_r($_FILES);
-            $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            $file_type = finfo_file($finfo, $tmp_name);
-            if ($file_type !== 'image/png' || $file_type !== 'image/jpeg') {
-                $errors['file'] = 'Загрузите файл в формате jpg, jpeg или png';
+            if (empty($_FILES['file']['name'])) {
+                $errors['file'] = 'Вы не загрузили файл';
             } else {
-                move_uploaded_file($tmp_name, 'uploads/' . $path);
-                $lot['path'] = $path;
+                $tmp_name = $_FILES['file']['tmp_name'];
+                $path = $_FILES['file']['name'];
+                $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                $file_type = finfo_file($finfo, $tmp_name);
+                if ($file_type == 'image/png' OR $file_type == 'image/jpeg') {
+                    move_uploaded_file($tmp_name, 'uploads/' . $path);
+                    $lot['img_path'] = $path;
+                } else {
+                    $errors['file'] = 'Загрузите файл в формате jpeg или png';
+                }
             }
-        } else {
-            $errors['file'] = 'Вы не загрузили файл';
         }
+
         if (count($errors)) {
             $content = include_template('add.php', ['lot' => $lot, 'nav' => $nav, 'categories' => $categories, 'errors' => $errors]);
         } else {
