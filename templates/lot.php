@@ -13,10 +13,7 @@
         </div>
         <div class="lot-item__right">
             <div class="lot-item__state">
-                <?= timer($lot['dt_remove'], false); ?>
-<!--                <div class="lot-item__timer timer">-->
-<!--                    10:54-->
-<!--                </div>-->
+                <?= timer($lot['dt_remove']); ?>
                 <div class="lot-item__cost-state">
                     <div class="lot-item__rate">
                         <span class="lot-item__amount">Текущая цена</span>
