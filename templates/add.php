@@ -7,7 +7,7 @@
     <div class="form__container-two">
         <?php $classname = isset($errors['lot-name']) ? "form__item--invalid" : "";
         $value = isset($lot['lot-name']) ? $lot['lot-name'] : ""; ?>
-        <div class="form__item  <?= $classname; ?>"> <!-- form__item--invalid -->
+        <div class="form__item  <?= $classname; ?>">
             <label for="lot-name">Наименование <sup>*</sup></label>
             <input id="lot-name" type="text" name="lot-name" placeholder="Введите наименование лота" value="<?= $value; ?>">
             <span class="form__error"><?= $errors['lot-name']; ?></span>
@@ -36,7 +36,7 @@
     <div class="form__item form__item--file <?= $classname; ?>">
         <label>Изображение <sup>*</sup></label>
         <div class="form__input-file">
-            <input class="visually-hidden" name="file" type="file" id="lot-img" value="<?= $value = isset($path) ? $path : ""; ?>">
+            <input class="visually-hidden" name="file" type="file" id="lot-img" value="<?= $value = isset($lot['file']) ? $lot['file'] : ""; ?>">
             <label for="lot-img">
                 Добавить
             </label>

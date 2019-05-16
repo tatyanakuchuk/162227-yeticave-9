@@ -3,8 +3,6 @@
 require_once('functions.php');
 require_once ('data.php');
 
-
-
 //проверка подключения
 if($connect == false) {
     $error = mysqli_connect_error();
@@ -51,17 +49,34 @@ if($connect == false) {
             }
         }
 
+        $lot_rate = $lot['lot-rate'];
+        $lot_step = $lot['lot-step'];
+        if (!empty($lot_rate) && !is_numeric($lot_rate)) {
+            $errors['lot-rate'] = 'Введите число';
+        }
+        if (!empty($lot_step) && !is_numeric($lot_step)) {
+            $errors['lot-step'] = 'Введите число';
+        }
+
         if (isset($_FILES['file']['name'])) {
             if (empty($_FILES['file']['name'])) {
                 $errors['file'] = 'Вы не загрузили файл';
             } else {
                 $tmp_name = $_FILES['file']['tmp_name'];
-                $path = $_FILES['file']['name'];
+                $file = $_FILES['file']['name'];
                 $finfo = finfo_open(FILEINFO_MIME_TYPE);
                 $file_type = finfo_file($finfo, $tmp_name);
+
+                // Получаем расширение загруженного файла
+                $extension = strtolower(substr(strrchr($file, '.'), 1));
+                //Генерируем новое имя файла
+                $file = uniqid() . '.' .  $extension;
+                //Папка назначения
+                $dest = 'uploads/';
                 if ($file_type == 'image/png' OR $file_type == 'image/jpeg') {
-                    move_uploaded_file($tmp_name, 'uploads/' . $path);
-                    $lot['img_path'] = $path;
+                    move_uploaded_file($tmp_name, $dest . $file);
+                    $lot['file'] = $dest . $file;
+                    $content = include_template('add.php', ['categories' => $categories, 'nav' => $nav]);
                 } else {
                     $errors['file'] = 'Загрузите файл в формате jpeg или png';
                 }
@@ -71,11 +86,11 @@ if($connect == false) {
         if (count($errors)) {
             $content = include_template('add.php', ['lot' => $lot, 'nav' => $nav, 'categories' => $categories, 'errors' => $errors]);
         } else {
-            $sql = 'INSERT INTO lots (dt_add, dt_remove, category_id, user_id, title, description, img_path, sum_start, bet_step, user_id_winner)' .
-                ' VALUES (NOW(), ?, ?, 3, ?, ?, ?, ?, ?, ?)';
-            $stmt = db_get_prepare_stmt($connect, $sql, [$lot['dt_remove'], $lot['category_id'], $lot['user_id'],
-                                        $lot['title'], $lot['description'], $lot['img_path'], $lot['sum_start'],
-                                        $lot['bet_step'], $lot['user_id_winner']]);
+            $sql = 'INSERT INTO lots (dt_add, dt_remove, category_id, user_id, title, description, img_path, sum_start, bet_step)' .
+                ' VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)';
+            $stmt = db_get_prepare_stmt($connect, $sql, [$lot['lot-date'], $lot['category'], $user_id,
+                                        $lot['lot-name'], $lot['message'], $lot['file'], $lot['lot-rate'],
+                                        $lot['lot-step']]);
             $res = mysqli_stmt_execute($stmt);
             if ($res) {
                 $lot_id = mysqli_insert_id($connect);

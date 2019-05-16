@@ -4,7 +4,7 @@ $connect = mysqli_connect("localhost", "root", "", "yeticave");
 mysqli_set_charset($connect, "utf8");
 
 $is_auth = rand(0, 1);
-
+$user_id = 3;
 $user_name = 'Татьяна';
 
 function price_format($numb) {
@@ -24,7 +24,7 @@ function timer($lot_time, $isMainPage = false) {
     $current_date = date_create("now");
     $finish_date = date_create("$lot_time");
     $diff = date_diff($current_date, $finish_date);
-    $time_left = date_interval_format($diff, "%H:%i");
+    $time_left = date_interval_format($diff, "%dд. %H:%i");
     $time_left_sec = (strtotime("$lot_time") - strtotime("now"));
     $lot_expiry_sec = 3600;
     $timer_class = ($isMainPage) ? 'lot__timer' : 'lot-item__timer';
