@@ -5,6 +5,7 @@ mysqli_set_charset($connect, "utf8");
 
 $is_auth = rand(0, 1);
 $user_id = 3;
+$avatar = 'Путь к картинке';
 $user_name = 'Татьяна';
 
 function price_format($numb) {
