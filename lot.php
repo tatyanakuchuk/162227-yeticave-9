@@ -1,5 +1,8 @@
 <?php
+session_start();
+
 $is404error = false;
+
 require_once('functions.php');
 require_once ('data.php');
 
@@ -57,20 +60,32 @@ if ($is404error) {
     $content = include_template('lot.php', [
         'categories' => $categories,
         'nav' => $nav,
-        'lot' => $lot[0]
+        'lot' => $lot[0],
+        $is_lot_page = true
     ]);
 }
 
-
-$layout_content = include_template('layout.php', [
-    'nav' => $nav,
-    'is_auth' => $is_auth,
-    'user_name' => $user_name,
-    'content' => $content,
-    'categories' => $categories,
-    'title' => 'Главная',
-    'isMainPage' => false
-]);
+if (isset($_SESSION['user'])) {
+    $username = $_SESSION['user']['name'];
+    $layout_content = include_template('layout.php', [
+        'nav' => $nav,
+        'is_auth' => $is_auth,
+        'username' =>  $username,
+        'content' => $content,
+        'categories' => $categories,
+        'title' => 'Лот',
+        'isMainPage' => false
+    ]);
+} else {
+    $layout_content = include_template('layout.php', [
+        'nav' => $nav,
+        'is_auth' => $is_auth,
+        'content' => $content,
+        'categories' => $categories,
+        'title' => 'Лот',
+        'isMainPage' => false
+    ]);
+}
 
 print($layout_content);
 

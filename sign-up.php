@@ -63,11 +63,17 @@ if($connect == false) {
         }
 
         if(count($errors)) {
-            $content = include_template('sign-up.php', ['sign_up' => $sign_up, 'nav' => $nav, 'errors' => $errors]);
+            $content = include_template('sign-up.php', [
+                'sign_up' => $sign_up,
+                'nav' => $nav,
+                'title' => 'Регистрация нового аккаунта',
+                'errors' => $errors
+            ]);
         } else {
+            $password = password_hash($sign_up['password'], PASSWORD_DEFAULT);
             $sql = 'INSERT INTO users (dt_add, name, email, password, avatar, contact)' .
                 ' VALUES (NOW(), ?, ?, ?, ?, ?)';
-            $stmt = db_get_prepare_stmt($connect, $sql, [$sign_up['name'], $sign_up['email'], $sign_up['password'],
+            $stmt = db_get_prepare_stmt($connect, $sql, [$sign_up['name'], $sign_up['email'], $password,
                                         $avatar, $sign_up['message']]);
             $res = mysqli_stmt_execute($stmt);
             if ($res) {
@@ -76,17 +82,19 @@ if($connect == false) {
             }
         }
     } else {
-        $content = include_template('sign-up.php', ['nav' => $nav]);
+        $content = include_template('sign-up.php', [
+            'nav' => $nav,
+            'title' => 'Регистрация нового аккаунта',
+        ]);
     }
 }
 
 $layout_content = include_template('layout.php', [
     'nav' => $nav,
     'is_auth' => $is_auth,
-    'user_name' => $user_name,
     'content' => $content,
     'categories' => $categories,
-    'title' => 'Главная',
+    'title' => 'Регистрация нового аккаунта',
     'isMainPage' => false
 ]);
 
