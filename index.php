@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once('functions.php');
 require_once ('data.php');
@@ -41,18 +42,31 @@ $nav = include_template('nav.php', [
 
 $content = include_template('index.php', [
     'categories' => $categories,
-    'lots' => $lots
+    'lots' => $lots,
+    'title' => 'Открытые лоты'
 ]);
 
-$layout_content = include_template('layout.php', [
-    'nav' => $nav,
-    'is_auth' => $is_auth,
-    'user_name' => $user_name,
-    'content' => $content,
-    'categories' => $categories,
-    'title' => 'Главная',
-    'isMainPage' => true
-]);
+if (isset($_SESSION['user'])) {
+    $username = $_SESSION['user']['name'];
+    $layout_content = include_template('layout.php', [
+        'nav' => $nav,
+        'is_auth' => $is_auth,
+        'username' =>  $username,
+        'content' => $content,
+        'categories' => $categories,
+        'title' => 'Главная',
+        'isMainPage' => true
+    ]);
+} else {
+    $layout_content = include_template('layout.php', [
+        'nav' => $nav,
+        'is_auth' => $is_auth,
+        'content' => $content,
+        'categories' => $categories,
+        'title' => 'Главная',
+        'isMainPage' => true
+    ]);
+}
 
 print($layout_content);
 

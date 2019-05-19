@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 require_once('functions.php');
 require_once ('data.php');
@@ -23,7 +24,15 @@ if($connect == false) {
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $lot = $_POST;
-        $required = ['lot-name', 'message', 'category', 'file', 'lot-rate', 'lot-step', 'lot-date'];
+        $required = [
+            'lot-name',
+            'message',
+            'category',
+            'file',
+            'lot-rate',
+            'lot-step',
+            'lot-date'
+        ];
 
         $errors = [];
         foreach ($required as $key) {
@@ -76,7 +85,10 @@ if($connect == false) {
                 if ($file_type == 'image/png' OR $file_type == 'image/jpeg') {
                     move_uploaded_file($tmp_name, $dest . $file);
                     $lot['file'] = $dest . $file;
-                    $content = include_template('add.php', ['categories' => $categories, 'nav' => $nav]);
+                    $content = include_template('add.php', [
+                        'categories' => $categories,
+                        'nav' => $nav
+                    ]);
                 } else {
                     $errors['file'] = 'Загрузите файл в формате jpeg или png';
                 }
@@ -84,7 +96,12 @@ if($connect == false) {
         }
 
         if (count($errors)) {
-            $content = include_template('add.php', ['lot' => $lot, 'nav' => $nav, 'categories' => $categories, 'errors' => $errors]);
+            $content = include_template('add.php', [
+                'lot' => $lot,
+                'nav' => $nav,
+                'categories' => $categories,
+                'errors' => $errors
+            ]);
         } else {
             $sql = 'INSERT INTO lots (dt_add, dt_remove, category_id, user_id, title, description, img_path, sum_start, bet_step)' .
                 ' VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -98,19 +115,40 @@ if($connect == false) {
             }
         }
     } else {
-        $content = include_template('add.php', ['categories' => $categories, 'nav' => $nav]);
+        if (!isset($_SESSION['user'])) {
+            header("Location: /");
+            http_response_code(403);
+            exit();
+        } else {
+            $content = include_template('add.php', [
+                'categories' => $categories,
+                'nav' => $nav
+            ]);
+        }
     }
 }
 
-$layout_content = include_template('layout.php', [
-    'nav' => $nav,
-    'is_auth' => $is_auth,
-    'user_name' => $user_name,
-    'content' => $content,
-    'categories' => $categories,
-    'title' => 'Добавление лота',
-    'isMainPage' => false
-]);
+if (isset($_SESSION['user'])) {
+    $username = $_SESSION['user']['name'];
+    $layout_content = include_template('layout.php', [
+        'nav' => $nav,
+        'is_auth' => $is_auth,
+        'username' =>  $username,
+        'content' => $content,
+        'categories' => $categories,
+        'title' => 'Добавление лота',
+        'isMainPage' => false
+    ]);
+} else {
+    $layout_content = include_template('layout.php', [
+        'nav' => $nav,
+        'is_auth' => $is_auth,
+        'content' => $content,
+        'categories' => $categories,
+        'title' => 'Добавление лота',
+        'isMainPage' => false
+    ]);
+}
 
 print($layout_content);
 
