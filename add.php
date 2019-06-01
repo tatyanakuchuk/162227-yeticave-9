@@ -60,11 +60,25 @@ if($connect == false) {
 
         $lot_rate = $lot['lot-rate'];
         $lot_step = $lot['lot-step'];
-        if (!empty($lot_rate) && !is_numeric($lot_rate)) {
-            $errors['lot-rate'] = 'Введите число';
+        if (!empty($lot_rate)) {
+            if (!is_numeric($lot_rate)) {
+                $errors['lot-rate'] = 'Введите число';
+            }
+            if ($lot_rate != round($lot_rate)) {
+                $errors['lot-rate'] = 'Введите целое число';
+            }
         }
-        if (!empty($lot_step) && !is_numeric($lot_step)) {
-            $errors['lot-step'] = 'Введите число';
+        if (!empty($lot_step)) {
+            if (!is_numeric($lot_step)) {
+                $errors['lot-step'] = 'Введите число';
+            }
+            if ($lot_step != round($lot_step)) {
+                $errors['lot_step'] = 'Введите целое число';
+            }
+        }
+
+        if (!empty($lot['lot-date']) && strtotime($lot['lot-date']) <= strtotime('now') ) {
+            $errors[$key] = 'Введите корректную дату';
         }
 
         if (isset($_FILES['file']['name'])) {
@@ -103,15 +117,18 @@ if($connect == false) {
                 'errors' => $errors
             ]);
         } else {
-            $sql = 'INSERT INTO lots (dt_add, dt_remove, category_id, user_id, title, description, img_path, sum_start, bet_step)' .
-                ' VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)';
-            $stmt = db_get_prepare_stmt($connect, $sql, [$lot['lot-date'], $lot['category'], $user_id,
-                                        $lot['lot-name'], $lot['message'], $lot['file'], $lot['lot-rate'],
-                                        $lot['lot-step']]);
-            $res = mysqli_stmt_execute($stmt);
-            if ($res) {
-                $lot_id = mysqli_insert_id($connect);
-                header('Location: /lot.php?id=' . $lot_id);
+            if (isset($_SESSION['user'])) {
+                $user_id = $_SESSION['user']['id'];
+                $sql = 'INSERT INTO lots (dt_add, dt_remove, category_id, user_id, title, description, img_path, sum_start, bet_step)' .
+                    ' VALUES (NOW(), ?, ?, ?, ?, ?, ?, ?, ?)';
+                $stmt = db_get_prepare_stmt($connect, $sql, [$lot['lot-date'], $lot['category'], $user_id,
+                    $lot['lot-name'], $lot['message'], $lot['file'], $lot['lot-rate'],
+                    $lot['lot-step']]);
+                $res = mysqli_stmt_execute($stmt);
+                if ($res) {
+                    $lot_id = mysqli_insert_id($connect);
+                    header('Location: /lot.php?id=' . $lot_id);
+                }
             }
         }
     } else {
