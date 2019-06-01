@@ -91,7 +91,6 @@ if($connect == false) {
 
 $layout_content = include_template('layout.php', [
     'nav' => $nav,
-    'is_auth' => $is_auth,
     'content' => $content,
     'categories' => $categories,
     'title' => 'Регистрация нового аккаунта',

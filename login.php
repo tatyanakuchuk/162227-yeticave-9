@@ -84,7 +84,6 @@ if (isset($_SESSION['user'])) {
     $username = $_SESSION['user']['name'];
     $layout_content = include_template('layout.php', [
         'nav' => $nav,
-        'is_auth' => $is_auth,
         'content' => $content,
         'categories' => $categories,
         'title' => 'Вход',
@@ -94,7 +93,6 @@ if (isset($_SESSION['user'])) {
 } else {
     $layout_content = include_template('layout.php', [
         'nav' => $nav,
-        'is_auth' => $is_auth,
         'content' => $content,
         'categories' => $categories,
         'title' => 'Вход',
