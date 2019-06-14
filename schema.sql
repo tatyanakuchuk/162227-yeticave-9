@@ -25,6 +25,7 @@ CREATE TABLE lots (
 );
 
 CREATE INDEX dt_remove_lot ON lots(dt_remove);
+CREATE FULLTEXT INDEX lot_search ON lots(title, description);
 
 CREATE TABLE bets (
     id              INT AUTO_INCREMENT PRIMARY KEY,

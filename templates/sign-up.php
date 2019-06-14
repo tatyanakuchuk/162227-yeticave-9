@@ -1,6 +1,4 @@
-<nav class="nav">
-    <ul class="nav__list container"><?= $nav; ?></ul>
-</nav>
+<?= $nav; ?>
 <?php $classname = !empty($errors) ? "form--invalid" : ""; ?>
 <form class="form container <?= $classname; ?>" action="../sign-up.php" method="post" autocomplete="off">
     <h2>Регистрация нового аккаунта</h2>

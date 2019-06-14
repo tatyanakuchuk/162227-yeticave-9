@@ -1,6 +1,4 @@
-<nav class="nav">
-    <ul class="nav__list container"><?= $nav; ?></ul>
-</nav>
+<?= $nav; ?>
 <?php $classname = !empty($errors) ? "form--invalid" : ""; ?>
 <form class="form container <?= $classname; ?>" action="../login.php" method="post">
     <h2>Вход</h2>

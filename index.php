@@ -9,10 +9,21 @@ if($connect == false) {
     $error = mysqli_connect_error();
     print('Ошибка подключения: ' . mysqli_connect_error());
 } else {
+    $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+    $res_count_lots = mysqli_query($connect, 'SELECT count(*) AS cnt FROM lots WHERE dt_remove > NOW()');
+    $items_count = mysqli_fetch_assoc($res_count_lots)['cnt'];
+
+    $page_items = 9;
+    $offset = ($current_page - 1) * $page_items;
+
+    $pages_count = ceil($items_count / $page_items);
+    $pages = range(1, $pages_count);
+
     //создаем запрос для получения списка новых лотов
     $sql_lots = 'SELECT l.id, title, img_path, sum_start, bet_step, c.name, dt_remove FROM lots l ' .
                 'JOIN categories c ON l.category_id = c.id  ' .
-                'WHERE dt_remove > NOW() ORDER BY dt_add DESC LIMIT 6';
+                'WHERE dt_remove > NOW() ORDER BY dt_add DESC LIMIT ' . $page_items . ' OFFSET ' . $offset;
     //отправляем запрос и получаем результат
     $res_lots = mysqli_query($connect, $sql_lots);
     //запрос выполнен успешно
@@ -36,6 +47,13 @@ if($connect == false) {
     }
 }
 
+$pagination = include_template('pagination.php', [
+    'pages_count' => $pages_count,
+    'pages' => $pages,
+    'current_page' => $current_page
+]);
+
+
 $nav = include_template('nav.php', [
     'categories' => $categories
 ]);
@@ -43,7 +61,8 @@ $nav = include_template('nav.php', [
 $content = include_template('index.php', [
     'categories' => $categories,
     'lots' => $lots,
-    'title' => 'Открытые лоты'
+    'title' => 'Открытые лоты',
+    'pagination' => $pagination
 ]);
 
 if (isset($_SESSION['user'])) {

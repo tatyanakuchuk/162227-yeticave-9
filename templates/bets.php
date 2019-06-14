@@ -1,6 +1,4 @@
-<nav class="nav">
-    <ul class="nav__list container"><?= $nav; ?></ul>
-</nav>
+<?= $nav; ?>
 <section class="rates container">
     <h2><?= $title; ?></h2>
     <table class="rates__list">
@@ -32,7 +30,6 @@
                 <?php else: ?>
                 <h3 class="rates__title"><a href="/lot.php?id=<?= $bet['id']; ?>"><?= $bet['title']; ?></a></h3>
                 <?php endif; ?>
-
             </td>
             <td class="rates__category">
                 <?= $bet['category_name']; ?>

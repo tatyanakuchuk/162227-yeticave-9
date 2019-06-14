@@ -16,7 +16,6 @@
             <label for="cost">Ваша ставка</label>
             <input id="cost" type="text" name="cost" placeholder="12 000" value="<?= $value; ?>">
             <input type="hidden" name="lot-id" value="<?= isset($lot_id) ? $lot_id : ''; ?>">
-
             <span class="form__error"><?= isset($errors['cost']) ? $errors['cost'] : ''; ?></span>
         </p>
         <button type="submit" class="button">Сделать ставку</button>

@@ -21,18 +21,30 @@ function price_format($numb) {
     return $price_formated . '<b class="rub">₽</b>';
 }
 
-function timer($lot_time, $isMainPage = false) {
+function timer($lot_time, $isMainPage = false)
+{
+    $oneHour = 3600;
+    $hoursInDay = 24;
+
     $current_date = date_create("now");
     $finish_date = date_create($lot_time);
     $diff = date_diff($current_date, $finish_date);
-    $time_left = date_interval_format($diff, "%H:%i:%s");
+
+    $days_left = date_interval_format($diff, "%d") * $hoursInDay;
+    $hours_left = date_interval_format($diff, "%h") + $days_left;
+    $time_left = $hours_left . ':' . date_interval_format($diff, "%i:%s");
+
     $time_left_sec = (strtotime($lot_time) - strtotime("now"));
-    $lot_expiry_sec = 3600;
     $timer_class = ($isMainPage) ? 'lot__timer' : 'lot-item__timer';
-    if ($time_left_sec <= $lot_expiry_sec) {
+    if ($time_left_sec <= 0) {
+        return '<div class="lot__timer timer timer--end">Торги окончены</div>';
+    }
+    elseif ($time_left_sec <= $oneHour) {
         return '<div class="' . $timer_class . ' timer timer--finishing">' . $time_left . '</div>';
+        var_dump($time_left);
     } else {
         return '<div class="' . $timer_class . ' timer">' . $time_left . '</div>';
+        var_dump($time_left);
     }
 }
 
@@ -59,6 +71,18 @@ function get_noun_plural_form (int $number, string $one, string $two, string $ma
             return $many;
     }
 }
+
+
+function get_plural_form_bets($bets) {
+    return $bets . ' ' . get_noun_plural_form(
+        $bets,
+        'ставка',
+        'ставки',
+        'ставок'
+    );
+}
+
+
 
 function bet_timer($bet_dt_add)
 {
